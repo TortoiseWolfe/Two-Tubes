@@ -1,160 +1,191 @@
-# Development Workflow for RPG-Suite & ZZZ Integration
+# Development Workflow: First Principles
 
-This document outlines the development workflow for integrating the RPG-Suite WordPress plugin with the ZZZ containerized environment.
+This document outlines the core development workflow for the RPG-Suite WordPress plugin and its integration with the ZZZ containerized test environment.
 
-## Step 1: Start the ZZZ Environment
+## Guiding Principles
 
-First, we need to start the ZZZ environment which runs WordPress with BuddyPress in Docker containers:
+1. **Local Development**: Develop plugin code locally for maximum efficiency
+2. **Clean Deployment**: Deploy to test environment without side effects
+3. **Rapid Iteration**: Minimize time between code changes and testing
+4. **Consistent Testing**: Ensure testing environment remains stable
+5. **Progressive Development**: Build core functionality first, then extend
+
+## Development Environment
+
+### Directory Structure
+
+```
+two_Tubes/                     # Main project directory
+├── RPG-Suite/                 # WordPress plugin repository
+│   ├── rpg-suite.php          # Main plugin file
+│   ├── includes/              # Core plugin infrastructure
+│   └── src/                   # Plugin subsystems
+├── ZZZ/                       # Test environment repository
+│   ├── setup.sh               # Environment setup script
+│   └── docker-compose.yml     # Container configuration
+├── deploy-plugin.sh           # Plugin deployment script
+└── specs/                     # Project specifications
+```
+
+## Development Workflow
+
+### 1. Environment Setup
+
+Start the ZZZ environment which provides WordPress with BuddyPress:
 
 ```bash
+# Navigate to the ZZZ environment directory
 cd /home/turtle_wolfe/repos/two_Tubes/ZZZ
+
+# Start the Docker environment
 ./setup.sh
 ```
 
-This script will:
-- Build and start all Docker containers
-- Set up WordPress with BuddyPress
-- Configure the BuddyX theme with vapvarun child theme
-- Initialize the geolarp site
+This creates a consistent testing environment with:
+- WordPress installed and configured
+- BuddyPress and BuddyX theme activated
+- Appropriate permissions and settings
 
-## Step 2: Initialize Site Content
+### 2. Local Plugin Development
 
-After the environment is running, initialize the site content for better testing:
+Work on the plugin code in your local development environment:
 
 ```bash
-cd /home/turtle_wolfe/repos/two_Tubes/ZZZ
-./content-scripts/geolarp/initialize.sh
+# Navigate to the plugin directory
+cd /home/turtle_wolfe/repos/two_Tubes/RPG-Suite
+
+# Make code changes using your preferred editor
 ```
 
-This will set up:
-- Admin user profile with avatar
-- Site theme colors
-- Cover image
+Follow these development principles:
+- One subsystem at a time
+- Clear separation of concerns
+- Event-driven communication between subsystems
+- Global access pattern for plugin instance
 
-## Step 3: Deploy the RPG-Suite Plugin
+### 3. Plugin Deployment
 
-Use the deployment script to install and activate the RPG-Suite plugin:
+When ready to test, deploy the plugin to the ZZZ environment:
 
 ```bash
+# Deploy from the project root
 cd /home/turtle_wolfe/repos/two_Tubes
 ./deploy-plugin.sh geolarp
 ```
 
-This script:
-- Copies the plugin files to the WordPress container
-- Sets the correct file permissions
-- Activates the plugin in WordPress
+The deployment script:
+- Copies plugin files to the WordPress container
+- Sets appropriate file permissions
+- Activates the plugin if necessary
+- Preserves user data between deployments
 
-## Step 4: Access the WordPress Admin
+### 4. Testing
 
-Log in to WordPress admin to work with the plugin:
+Test the plugin functionality in the ZZZ environment:
 
-- URL: http://localhost:8002/wp-admin
-- Username: admin
-- Password: admin_password
+- **WordPress Admin**: http://localhost:8002/wp-admin
+  - Username: admin
+  - Password: admin_password
+  
+- **BuddyPress Profiles**: http://localhost:8002/members/admin/
+  - Test character display in profiles
+  - Verify theme compatibility
 
-## Step 5: Make Changes to the Plugin
+### 5. Debugging
 
-1. Edit the plugin files in `/home/turtle_wolfe/repos/two_Tubes/RPG-Suite/`
-2. When ready to test, redeploy the plugin:
-   ```bash
-   ./deploy-plugin.sh geolarp
-   ```
+When issues arise, use these debugging approaches:
 
-## Step 6: Debug and Test
-
-For debugging issues:
-
-### View container logs
 ```bash
+# View WordPress logs
 docker logs wp_geolarp
-```
 
-### Access WordPress shell
-```bash
+# Access WordPress container shell
 docker exec -it wp_geolarp bash
-```
 
-### Check plugin status
-```bash
+# Check plugin status
 docker exec wp_geolarp wp plugin status --allow-root
-```
 
-### Test database tables
-```bash
+# Verify database tables
 docker exec wp_geolarp wp db query "SHOW TABLES LIKE '%rpg%';" --allow-root
 ```
 
+For more advanced debugging:
+- Enable WP_DEBUG in wp-config.php
+- Use Query Monitor plugin
+- Check browser console for JavaScript errors
+
+### 6. Documentation
+
+As you develop, maintain documentation:
+
+- Update implementation notes in ai_docs
+- Document key decisions and approaches
+- Maintain code comments for important functions
+- Update specifications if requirements change
+
+## Implementation Approach
+
+### Phased Implementation
+
+Follow this implementation sequence to build a solid foundation:
+
+1. **Core Infrastructure** (First)
+   - Plugin initialization
+   - Autoloader
+   - Global access pattern
+   - Event system
+
+2. **Character System** (Second)
+   - Character post type
+   - Character-user relationship
+   - Character CRUD operations
+   - Active character tracking
+
+3. **BuddyPress Integration** (Third)
+   - Profile display component
+   - Theme compatibility
+   - Character profile tab
+   - Profile actions
+
+4. **Experience System** (Fourth)
+   - User-level XP tracking
+   - Feature unlocking based on XP
+   - Progress visualization
+   - XP history logging
+
+5. **Additional Subsystems** (Fifth+)
+   - Health subsystem
+   - Geo subsystem
+   - Dice subsystem
+   - Inventory subsystem
+
+### Core-First Implementation
+
+Within each phase, implement in this order:
+
+1. Core functionality with minimal dependencies
+2. Basic WordPress integration points
+3. User interface components
+4. Extended features and refinements
+
 ## BuddyPress Integration Testing
 
-To specifically test BuddyPress integration:
+When testing BuddyPress integration, verify:
 
-1. Create a test character through WordPress admin at http://localhost:8002/wp-admin/post-new.php?post_type=rpg_character
-2. View the BuddyPress profile at http://localhost:8002/members/admin/
-3. Check if the character appears correctly in the profile
+1. **Character Display**: Character appears in profile header
+2. **Theme Compatibility**: Works with BuddyX theme
+3. **Responsive Design**: Displays correctly on all screen sizes
+4. **Character Switching**: UI appears correctly (if feature unlocked)
+5. **User Experience**: Flows naturally in the BuddyPress context
 
-## Implementation Status
+## Iteration and Refinement
 
-### Completed Tasks ✅
+After initial implementation:
 
-1. **Core plugin structure with proper global access**
-   - Implemented global `$rpg_suite` variable for consistent access
-   - Created global accessor function `rpg_suite()`
-   - Set up primary plugin class with public properties
+1. Identify areas for improvement
+2. Refine user experience
+3. Optimize performance
+4. Extend functionality
+5. Document lessons learned
 
-2. **Character Manager functionality**
-   - Implemented character post type with metadata fields
-   - Added support for multiple characters per player
-   - Created character ownership relationship
-   - Added active character selection system
-
-3. **BuddyPress profile integration**
-   - Implemented character display in BuddyPress profiles
-   - Created dynamic component generation system
-   - Fixed positioning to place character inside profile card
-   - Added BuddyX theme-specific styling
-
-### Current Issues 🐛
-
-1. **Character Editing Bug (CRITICAL)**
-   - Admin users receive "You attempted to edit an item that doesn't exist. Perhaps it was deleted?" error
-   - Characters exist but cannot be edited
-   - Requires investigation of post type registration and capabilities
-   - Priority task for next development session
-
-### Next Implementation Tasks 🔄
-
-1. **Experience System with GamiPress**
-   - Integrate with existing GamiPress installation
-   - Create custom point types for character experience
-   - Implement feature unlocking based on achievements
-   - Design progression visualization UI
-
-2. **Health Subsystem**
-   - Implement character HP tracking
-   - Create health status effects
-   - Add visual health representation
-
-## Adding New Subsystems
-
-To implement a new subsystem:
-
-1. Create the necessary class files in `/home/turtle_wolfe/repos/two_Tubes/RPG-Suite/src/[Subsystem]/`
-2. Follow the structure in the existing Core and Health subsystems
-3. Update the main plugin class to load the new subsystem
-4. Deploy and test in the ZZZ environment
-
-## Feature Implementation Progression
-
-Per the character management progression model:
-
-1. Implement basic character creation for all users
-2. Add experience points (XP) tracking
-3. Add feature unlocking based on XP levels:
-   - Character editing (1,000 XP)
-   - Character respawn (2,500 XP)
-   - Multiple characters (5,000 XP)
-   - Character switching (7,500 XP)
-   - Advanced customization (10,000 XP)
-
-This progression system provides natural onboarding and engagement.
+By following this workflow, you'll maintain a structured approach to developing the RPG-Suite plugin while ensuring a solid integration with the ZZZ test environment.

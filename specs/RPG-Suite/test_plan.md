@@ -1,222 +1,289 @@
-# RPG-Suite Test Plan for ZZZ Environment
+# RPG-Suite Test Plan: First Principles
 
-This document outlines the testing approach for the RPG-Suite WordPress plugin in the ZZZ environment, with particular focus on BuddyPress integration.
+This document outlines a testing approach for the RPG-Suite WordPress plugin based on first principles, focusing on the core functionality and integration with WordPress and BuddyPress.
 
-## Setup Requirements
+## Testing Principles
 
-1. **Environment**:
-   - ZZZ Docker environment running geoLARP site
-   - WordPress 6.8+
-   - BuddyPress (latest stable)
-   - BuddyX Theme
+1. **Independent Verification**: Each component should be tested in isolation
+2. **Integration Testing**: Verify components work together correctly
+3. **User-Centric Testing**: Test from the perspective of different user roles
+4. **Cross-Environment Testing**: Verify functionality across different environments
+5. **Edge Case Coverage**: Test boundary conditions and unusual scenarios
 
-2. **Plugin Installation**:
-   - Copy RPG-Suite plugin files to WordPress plugins directory using existing scripts
-   - Activate plugin through WordPress admin panel
+## Test Environment
+
+### Requirements
+
+- **WordPress**: Version 6.0+
+- **BuddyPress**: Version 8.0+
+- **BuddyX Theme**: Latest version
+- **PHP**: Version 7.4+
+- **Database**: MySQL 5.7+ or MariaDB 10.3+
+- **Test Users**: Admin, Author, Subscriber roles
+
+### Environment Setup
+
+The ZZZ Docker environment provides a consistent testing platform with:
+
+1. **Fresh WordPress Installation**: Clean WordPress setup
+2. **BuddyPress Configuration**: Pre-configured BuddyPress with test users
+3. **BuddyX Theme**: Properly configured theme
+4. **Plugin Deployment**: Automatic deployment via deploy-plugin.sh
+5. **Test Data**: Pre-populated test data for consistent testing
 
 ## Test Categories
 
-### 1. Core Functionality
+### 1. Core Functionality Tests
 
-#### 1.1 Plugin Activation
-- [ ] Plugin activates without errors
-- [ ] Database tables are created correctly
-- [ ] Default options are set
-- [ ] Admin menu items appear in WordPress dashboard
+#### 1.1 Plugin Infrastructure
+
+- **Autoloader**: Verify classes load correctly with proper namespacing
+- **Global Access**: Test rpg_suite() function returns plugin instance
+- **Activation/Deactivation**: Verify clean activation and deactivation
+- **Database Tables**: Check proper creation and removal of tables
 
 #### 1.2 Event System
-- [ ] Test event dispatching from Core subsystem
-- [ ] Verify event subscribers receive events
-- [ ] Confirm cross-subsystem event communication works
 
-#### 1.3 REST API
-- [ ] Verify API endpoints are accessible
-- [ ] Test authentication and permissions
-- [ ] Confirm data format consistency
+- **Event Dispatch**: Verify events are properly dispatched
+- **Event Subscription**: Confirm subscribers receive events
+- **Event Data**: Validate event data is passed correctly
+- **Cross-Subsystem Communication**: Test events between subsystems
 
-### 2. Character Management
+#### 1.3 WordPress Integration
 
-#### 2.1 Character Creation
-- [ ] Create character as regular user
-- [ ] Create character as Game Master
-- [ ] Create NPC character
-- [ ] Verify character limit enforcement (default: 2 per player)
-- [ ] Test "Edit Character" link in admin bar to ensure it redirects to the correct character edit screen
-- [ ] Verify character editing doesn't conflict with other plugins (especially GamiPress)
+- **Admin Menu**: Verify admin menus appear correctly
+- **Post Type Registration**: Check character post type registration
+- **Capabilities**: Test proper capability mapping
+- **Settings API**: Verify settings are saved and retrieved correctly
 
-#### 2.2 Character Switching
-- [ ] Switch between multiple characters
-- [ ] Verify only one character can be active at a time
-- [ ] Confirm character switching updates all related UI elements
+### 2. Character System Tests
 
-#### 2.3 BuddyPress Integration
-- [ ] Verify characters appear on user profiles
-- [ ] Test character actions in activity feed
-- [ ] Confirm character privacy settings work with BuddyPress friend system
+#### 2.1 Character Post Type
 
-### 3. Subsystem Tests
+- **Registration**: Verify post type is registered
+- **Meta Fields**: Test custom meta field registration
+- **Capabilities**: Check proper access control
+- **REST API**: Test character endpoints
 
-#### 3.1 Health Subsystem
-- [ ] Verify initial health values are set for new characters
-- [ ] Test damage application
-- [ ] Test healing application
-- [ ] Confirm health UI display (shortcodes)
-- [ ] Test health REST API endpoints
+#### 2.2 Character Management
 
-#### 3.2 Geo Subsystem
-- [ ] Create and manage zones
-- [ ] Set character positions
-- [ ] Test position privacy settings (public, friends, GM only)
-- [ ] Verify map display (shortcodes)
-- [ ] Test geo REST API endpoints
-- [ ] Confirm zone transitions fire appropriate events
+- **Creation**: Test character creation
+- **Retrieval**: Verify character retrieval methods
+- **User Relationship**: Test character-user relationship
+- **Active Character**: Verify active character functionality
 
-#### 3.3 Dice Subsystem
-- [ ] Test basic dice rolling (d20, 2d6, etc.)
-- [ ] Test complex notation (4d6h3, 2d20l1, etc.)
-- [ ] Verify dice results in comments
-- [ ] Test skill checks with advantages/disadvantages
-- [ ] Confirm dice rolling appears in activity feed
-- [ ] Test dice REST API endpoints
+#### 2.3 Character Switching
 
-#### 3.4 Inventory Subsystem
-- [ ] Create items of various types
-- [ ] Add items to character inventory
-- [ ] Test inventory limits
-- [ ] Stack/unstack items
-- [ ] Equip/unequip items
-- [ ] Test equipment slots
-- [ ] Verify inventory display (shortcodes)
-- [ ] Test inventory REST API endpoints
+- **Multiple Characters**: Test handling multiple characters
+- **Switching**: Verify character switching works correctly
+- **State Persistence**: Check state is maintained when switching
+- **UI Updates**: Confirm UI updates when character changes
 
-### 4. Performance Testing
+### 3. BuddyPress Integration Tests
 
-#### 4.1 Load Testing
-- [ ] Test with multiple concurrent users
-- [ ] Verify system performance with many characters
-- [ ] Test with large inventory datasets
-- [ ] Measure REST API response times
+#### 3.1 Profile Display
 
-#### 4.2 Memory Usage
-- [ ] Monitor WordPress memory usage
-- [ ] Check for memory leaks during extended sessions
-- [ ] Test with WordPress debugging enabled
+- **Character Display**: Verify character appears in profile
+- **Display Consistency**: Test display across different themes
+- **Responsiveness**: Check mobile responsiveness
+- **Styling**: Verify CSS styling is applied correctly
 
-### 5. User Experience Testing
+#### 3.2 Theme Compatibility
 
-#### 5.1 Frontend Experience
-- [ ] Test all shortcodes in posts and pages
-- [ ] Verify mobile responsiveness
-- [ ] Test in various browsers (Chrome, Firefox, Safari)
+- **Default Theme**: Test with default BuddyPress theme
+- **BuddyX Theme**: Verify compatibility with BuddyX
+- **Child Themes**: Test with BuddyX child themes
+- **Hook Usage**: Confirm correct hooks are used
 
-#### 5.2 Admin Experience
-- [ ] Verify all settings pages work correctly
-- [ ] Test Game Master tools and interfaces
-- [ ] Confirm role-based permissions work as expected
+#### 3.3 Navigation Integration
+
+- **Character Tab**: Verify character tab appears in profile
+- **Tab Content**: Test character tab content
+- **Sub-Navigation**: Check sub-navigation items
+- **Active States**: Verify active states are correctly set
+
+### 4. Experience System Tests
+
+#### 4.1 XP Tracking
+
+- **XP Awards**: Test awarding XP to users
+- **XP Storage**: Verify XP is stored correctly
+- **XP History**: Check XP history logging
+- **XP Display**: Test XP visualization
+
+#### 4.2 Feature Unlocking
+
+- **Feature Access**: Test feature access based on XP
+- **Notifications**: Verify unlocking notifications
+- **UI Adaptation**: Check UI changes based on unlocked features
+- **Feature Persistence**: Confirm features stay unlocked
+
+### 5. Additional Subsystem Tests
+
+#### 5.1 Health Subsystem
+
+- **HP Tracking**: Test health point tracking
+- **Damage/Healing**: Verify damage and healing application
+- **Death Handling**: Test character death mechanics
+- **Health Display**: Check health visualization
+
+#### 5.2 Geo Subsystem
+
+- **Zone Management**: Test zone creation and management
+- **Character Positioning**: Verify position tracking
+- **Movement**: Test movement between zones
+- **Position Display**: Check position visualization
+
+#### 5.3 Dice Subsystem
+
+- **Dice Notation**: Test parsing of dice notation
+- **Roll Execution**: Verify random number generation
+- **Roll History**: Check roll history tracking
+- **Success Determination**: Test success/failure logic
+
+#### 5.4 Inventory Subsystem
+
+- **Item Management**: Test item creation and properties
+- **Inventory Tracking**: Verify inventory management
+- **Equipment Slots**: Test equipping/unequipping items
+- **Inventory Display**: Check inventory visualization
 
 ## Test Scenarios
 
-### Scenario 1: Character Creation and Basic Interaction
-1. Player creates new account on geoLARP site
-2. Player creates new character
-3. System assigns default health, position, and inventory
-4. Player makes a post with their character
-5. Player makes a dice roll in a comment
+### Scenario 1: New Player Experience
 
-### Scenario 2: Multi-Character Management
-1. Player creates second character
-2. Player switches between characters
-3. Each character has separate health, position, and inventory
-4. Player attempts to create third character (should be prevented)
+**Objective**: Verify the complete flow for a new player
 
-### Scenario 3: Game Master Interaction
-1. GM creates NPC character
-2. GM assigns NPC to a zone
-3. GM gives item to player character
-4. GM applies damage to player character
-5. Player sees changes in their character
+1. Create new WordPress user
+2. Navigate to RPG-Suite section
+3. Create a new character
+4. View character in BuddyPress profile
+5. Make basic character actions
+6. Earn initial XP
 
-### Scenario 4: Social Interaction with BuddyPress
-1. Two players become friends
-2. Players can see each other's character positions
-3. Players interact via comments with dice rolls
-4. Activity appears in BuddyPress feeds
-5. Test privacy settings for non-friends
+**Expected Results**:
+- User successfully creates a character
+- Character appears in BuddyPress profile
+- Character information is accurate
+- XP is awarded and tracked
 
-## Test Reporting
+### Scenario 2: Character Management
 
-For each test, record the following:
-- Test ID and description
-- Expected outcome
-- Actual outcome
-- Pass/Fail status
-- Notes or issues discovered
-- Browser/device information (if relevant)
+**Objective**: Test character creation, editing, and switching
 
-## Bug Tracking
+1. Create multiple characters
+2. Edit character details
+3. Switch between characters
+4. Verify each character maintains its state
 
-Report bugs using the following format:
-- Bug ID
-- Bug description
-- Steps to reproduce
-- Expected behavior
-- Actual behavior
-- Screenshots (if applicable)
-- Environment details
-- Severity level (Critical, High, Medium, Low)
+**Expected Results**:
+- Multiple characters can be created (if feature unlocked)
+- Character details can be edited
+- Switching characters works correctly
+- Each character's state is maintained
 
-### Known Issues
+### Scenario 3: Feature Progression
 
-#### BUG-001: Edit Character Link Redirects to GamiPress
-- **Description**: Clicking on the "Edit Character" link in the admin bar redirects to editing GamiPress point types instead of the character
-- **Steps to Reproduce**: 
-  1. Create a character post
-  2. View the character in the front-end
-  3. Click on "Edit Character" in the admin bar
-- **Expected Behavior**: User should be taken to the character edit screen
-- **Actual Behavior**: User is redirected to GamiPress point types editing screen
-- **Environment**: WordPress 6.8+, BuddyPress 14.3.4, GamiPress 7.3.8, RPG-Suite 0.1.0
-- **Severity**: High
-- **Root Cause**: Post type capability conflict between RPG-Suite and GamiPress
+**Objective**: Verify the experience and feature unlocking system
 
-#### BUG-002: Character Creation Error
-- **Description**: Error message when attempting to create a new character
-- **Steps to Reproduce**:
-  1. Go to RPG-Suite > Characters in the admin menu
-  2. Click "Add New"
-- **Expected Behavior**: Character creation form should load
-- **Actual Behavior**: Error message: "You attempted to edit an item that doesn't exist. Perhaps it was deleted?"
-- **Environment**: WordPress 6.8+, BuddyPress 14.3.4, RPG-Suite 0.1.0
-- **Severity**: Critical
-- **Root Cause**: Post type registration and capability mapping issues
+1. Award XP to a user
+2. Track progress toward feature unlocks
+3. Unlock a feature
+4. Verify feature accessibility
+5. Test UI adaptation based on unlocked features
 
-## Test Schedule
+**Expected Results**:
+- XP is correctly awarded and stored
+- Progress tracking is accurate
+- Features unlock at correct thresholds
+- UI adapts based on unlocked features
 
-1. **Core Functionality**: Day 1
-2. **Character Management**: Day 2
-3. **Subsystem Tests**: Day 3-4
-4. **Performance Testing**: Day 5
-5. **User Experience Testing**: Day 6
-6. **Bug fixes and regression testing**: Day 7
+### Scenario 4: BuddyPress Integration
 
-## Special Considerations
+**Objective**: Test complete BuddyPress integration
 
-1. **Data Privacy**: 
-   - Verify all user data is properly isolated
-   - Confirm character data doesn't leak between users
+1. View character in BuddyPress profile
+2. Navigate to character tab
+3. View detailed character information
+4. Test character actions from profile
+5. Verify theme compatibility
 
-2. **Security Testing**:
-   - Test with non-privileged users to ensure they can't access restricted features
-   - Verify API endpoints enforce appropriate permissions
+**Expected Results**:
+- Character displays correctly in profile
+- Character tab shows detailed information
+- Character actions work from profile
+- Display is compatible with themes
 
-3. **WordPress/BuddyPress Updates**:
-   - Test compatibility with upcoming WordPress and BuddyPress versions
-   - Document any potential issues for future updates
+## Test Matrix
 
-## Post-Testing Actions
+| Test Category | Admin User | Author User | Subscriber User |
+|---------------|------------|------------|-----------------|
+| Core Functionality | All tests | Limited tests | Limited tests |
+| Character System | All tests | All tests | All tests |
+| BuddyPress Integration | All tests | All tests | All tests |
+| Experience System | All tests | All tests | All tests |
+| Additional Subsystems | All tests | All tests | All tests |
 
-1. Document all found issues
-2. Prioritize fixes based on severity
-3. Implement fixes and conduct regression testing
-4. Update documentation based on findings
-5. Prepare deployment plan for production
+## Testing Tools
+
+1. **Unit Testing**: PHPUnit for isolated component testing
+2. **Integration Testing**: WordPress test framework
+3. **UI Testing**: Manual testing with screenshots
+4. **Performance Testing**: Query Monitor plugin
+5. **Compatibility Testing**: Testing across browsers and devices
+
+## Bug Reporting Template
+
+```
+## Bug Report
+
+### Description
+[Clear description of the issue]
+
+### Steps to Reproduce
+1. 
+2. 
+3. 
+
+### Expected Behavior
+[What should happen]
+
+### Actual Behavior
+[What actually happens]
+
+### Environment
+- WordPress version:
+- BuddyPress version:
+- Theme:
+- Browser:
+- Screen size:
+
+### Screenshots
+[If applicable]
+
+### Additional Notes
+[Any other context]
+```
+
+## Success Criteria
+
+The testing is successful when:
+
+1. All core functionality works as expected
+2. Character creation and management functions correctly
+3. BuddyPress integration displays characters properly
+4. Experience system tracks progress and unlocks features
+5. Subsystems function according to specifications
+6. Plugin activates and deactivates cleanly
+
+## Testing Schedule
+
+| Day | Focus Area | Activities |
+|-----|------------|------------|
+| 1 | Environment Setup | Prepare testing environment, deploy plugin |
+| 2 | Core Functionality | Test plugin infrastructure, event system |
+| 3 | Character System | Test character creation, management, switching |
+| 4 | BuddyPress Integration | Test profile display, theme compatibility |
+| 5 | Experience System | Test XP tracking, feature unlocking |
+| 6 | Additional Subsystems | Test health, geo, dice, inventory systems |
+| 7 | Regression Testing | Verify all components work together |

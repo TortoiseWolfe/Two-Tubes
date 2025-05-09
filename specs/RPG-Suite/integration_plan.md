@@ -1,124 +1,240 @@
-# RPG Suite Integration Plan for ZZZ Workflow
+# RPG-Suite Implementation Plan: First Principles
 
-## Overview
+## Core Architectural Principles
 
-This document outlines how to integrate the RPG Suite WordPress plugin into the existing ZZZ project with its four sites (crudGAMES, geoLARP, ScriptHammer, TurtleWolfe). The integration ensures the RPG Suite plugin is properly installed, activated, and tested within the existing WordPress containers.
+1. **Modular Design**: Create independent subsystems that can be enabled/disabled
+2. **Event-Driven Communication**: Use an event system for inter-subsystem communication
+3. **WordPress Integration**: Follow WordPress coding standards and API best practices
+4. **BuddyPress Enhancement**: Extend BuddyPress without modifying its core
+5. **Progressive Development**: Build core functionality first, then expand
 
-## Current Status
+## Plugin Structure
 
-The integration is **in progress**. The RPG Suite plugin has the following implementation status:
+```
+rpg-suite/
+├── rpg-suite.php                  # Main plugin file with initialization 
+├── includes/                      # Core plugin infrastructure
+│   ├── class-rpg-suite.php        # Main plugin class
+│   ├── class-activator.php        # Plugin activation handling
+│   ├── class-deactivator.php      # Plugin deactivation handling
+│   └── class-autoloader.php       # PSR-4 autoloader
+├── src/                           # Plugin subsystems and components
+│   ├── Core/                      # Core subsystem
+│   │   ├── class-core.php         # Core functionality
+│   │   ├── class-event.php        # Base event class
+│   │   ├── class-event-dispatcher.php  # Event dispatcher
+│   │   ├── class-event-subscriber.php  # Event subscriber interface
+│   │   └── Components/            # Core components
+│   │       └── class-profile-integration.php  # BuddyPress integration
+│   ├── Character/                 # Character subsystem
+│   │   ├── class-character-manager.php  # Character management
+│   │   └── class-character-post-type.php  # Character post type definition
+│   └── [Additional Subsystems]    # Health, Geo, Dice, etc.
+├── templates/                     # Template files
+│   └── profile/                   # BuddyPress profile templates
+├── assets/                        # CSS, JS, and images
+│   ├── css/
+│   ├── js/
+│   └── images/
+└── languages/                     # Translations
+```
 
-1. **Core Files**: ✅ Implemented
-   - `includes/class-autoloader.php` - PSR-4 compliant autoloader implemented
-   - `includes/class-rpg-suite.php` - Main plugin initialization class implemented
-   - `includes/class-activator.php` - Plugin activation handler implemented
-   - `includes/class-deactivator.php` - Plugin deactivation handler implemented
-   - `includes/class-character-manager.php` - Character management system implemented
-   - `rpg-suite.php` - Main plugin file with global access pattern implemented
+## Implementation Phases
 
-2. **Subsystems**: 
-   - Core subsystem: ✅ Implemented (event handling system)
-   - Health subsystem: 🚧 Basic structure implemented
-   - BuddyPress integration: ✅ Implemented (profile display inside card)
-   - Geo subsystem: ❌ Directory structure only
-   - Dice subsystem: ❌ Directory structure only
-   - Inventory subsystem: ❌ Directory structure only
-   - Combat subsystem: ❌ Directory structure only
-   - Quest subsystem: ❌ Directory structure only
+### Phase 1: Core Framework
 
-3. **Container Integration**:
-   - Docker deployment script: ✅ Implemented (`deploy-plugin.sh`)
-   - Plugin activation in container: ✅ Implemented
-   - BuddyPress integration testing: ✅ Implemented
+**Objective**: Establish the foundational structure and global access pattern
 
-4. **Known Issues**:
-   - Character editing bug: ❌ Admin users cannot edit characters (receive "item doesn't exist" error)
-   - XP/progression system: 🚧 Planning phase (considering GamiPress integration)
+1. **Autoloader Implementation**
+   - PSR-4 compliant class autoloader
+   - Proper namespace structure
+   - Autoloading test
 
-## Current Implementation Plan
+2. **Main Plugin Class**
+   - Global access pattern
+   - Subsystem initialization
+   - WordPress hooks registration
 
-### Priority 1: Fix Critical Bugs
+3. **Event System**
+   - Event dispatcher
+   - Base event class
+   - Subscriber interface
+   - WordPress action integration
 
-1. **Debug Character Editing Issue**:
-   - Investigate "You attempted to edit an item that doesn't exist" error
-   - Check post type registration and capabilities
-   - Verify post status and accessibility
-   - Test with different user roles
-   - Fix the issue to enable proper character management
+4. **Activation/Deactivation**
+   - Register activation hooks
+   - Clean deactivation process
+   - Database table creation with dbDelta
 
-2. **Ensure Proper Post Type Access**:
-   - Review capability mapping for rpg_character post type
-   - Test admin and editor access to characters
-   - Verify character ownership relationships
+### Phase 2: Character System
 
-### Priority 2: Experience System Integration
+**Objective**: Implement the core character management functionality
 
-1. **GamiPress Integration Planning**:
-   - Evaluate GamiPress for XP and progression tracking
-   - Design character leveling and feature unlocking system
-   - Plan achievement types and point systems
-   - Design UI for progression visualization
+1. **Character Post Type**
+   - Register custom post type
+   - Define meta fields
+   - Set up capabilities
 
-2. **Implement Core Experience Features**:
-   - Character XP tracking
-   - Level progression
-   - Feature unlocking based on achievements
-   - Progression display in profiles and admin
+2. **Character Manager**
+   - Character creation
+   - Character-player relationship
+   - Active character tracking
+   - Character listing and retrieval
 
-### Priority 3: Implement Remaining Subsystems
+3. **Character Templates**
+   - Single character view
+   - Character listing template
+   - Admin character edit screen
 
-1. **Implement Combat Subsystem**:
-   - Follow the pattern established by existing subsystems
-   - Implement turn-based combat system
-   - Add initiative tracking
-   - Create combat log system
-   - Integrate with Core event system
+4. **Initial BuddyPress Integration**
+   - Basic character display in profiles
+   - Theme-agnostic implementation
+   - BuddyX compatibility
 
-2. **Implement Quest Subsystem**:
-   - Follow the pattern established by existing subsystems
-   - Implement narrative quest system
-   - Add quest tracking and rewards
-   - Add REST API endpoints and shortcodes
-   - Integrate with Core event system
+### Phase 3: User Progression
 
-## Next Steps
+**Objective**: Create a system for user advancement and feature unlocking
 
-Once the basic subsystems are implemented:
+1. **Experience System**
+   - User-level XP tracking
+   - XP award mechanisms
+   - XP history logging
 
-1. **End-to-End Testing**:
-   - Test complete player journeys
-   - Verify GM tools and abilities
-   - Test performance under load
+2. **Feature Unlocking**
+   - Feature threshold definitions
+   - Unlocking notifications
+   - Feature access checks
+   - Adaptive UI based on unlocked features
 
-2. **Add Testing Framework**:
-   - Implement unit tests for each subsystem
-   - Add integration tests for WordPress compatibility
+3. **Character Advancement**
+   - Character levels
+   - Attribute improvement
+   - Skills and abilities
 
-3. **Documentation**:
-   - Document the integration approach
-   - Add setup instructions to both repositories
-   - Create user and admin guides
+4. **Progress Visualization**
+   - XP progress bars
+   - Feature unlock indicators
+   - Achievement notifications
 
-## Repositories Strategy
+### Phase 4: Additional Subsystems
 
-We will keep the repositories separate for cleaner development:
+**Objective**: Add modular subsystems for expanded functionality
 
-1. **Independent Development**: Each repository maintains its own development cycle
-2. **Script-Based Deployment**: Use scripts to copy plugin files rather than volume mounting
-3. **Flexible Deployment**: Easily adaptable for production later
+1. **Health Subsystem**
+   - HP tracking
+   - Status effects
+   - Visual health display
 
-## Long-Term Development Plan
+2. **Inventory Subsystem**
+   - Item management
+   - Character equipment
+   - Item properties
 
-1. **Staged Subsystem Development**:
-   - Complete one subsystem at a time
-   - Ensure backward compatibility
+3. **Geo Subsystem**
+   - Zone definitions
+   - Character positioning
+   - Movement tracking
 
-2. **Installation Script**:
-   - Create proper installation process
+4. **Dice Subsystem**
+   - Dice notation parsing
+   - Random number generation
+   - Roll history
 
-3. **CI/CD Pipeline**:
-   - Add automated testing
-   - Implement semantic versioning
+### Phase 5: Advanced Integration
 
-4. **Deployment Workflow**:
-   - Create packaging and release system
+**Objective**: Enhance BuddyPress integration and add admin features
+
+1. **Enhanced BuddyPress Integration**
+   - Character switching in profiles
+   - Character actions in activity stream
+   - Character profile tab
+
+2. **Admin Interface**
+   - Admin dashboard
+   - Subsystem management
+   - Global settings
+
+3. **User Interface Improvements**
+   - Enhanced character display
+   - Interactive features
+   - Mobile responsiveness
+
+4. **Documentation**
+   - User guide
+   - Admin guide
+   - Developer documentation
+
+## BuddyPress Integration Approach
+
+The integration with BuddyPress will follow these principles:
+
+1. **Multiple Hook Points**: Support various themes by registering with multiple hooks
+   ```php
+   // Primary hook for inside the profile card
+   add_action('bp_member_header_inner_content', array($this, 'display_character_header'));
+   
+   // Fallback hooks in case primary hook isn't available
+   add_action('bp_profile_header_meta', array($this, 'display_character_header'));
+   add_action('bp_member_header_actions', array($this, 'display_character_header'));
+   
+   // BuddyX specific hooks
+   add_action('buddyx_member_header_actions', array($this, 'display_character_header'));
+   ```
+
+2. **Theme-Agnostic CSS**: Create styles that work with various themes
+   ```css
+   /* Base styles for all themes */
+   .rpg-character-profile { ... }
+   
+   /* BuddyX theme specific overrides */
+   .buddyx-user-container .rpg-character-profile { ... }
+   ```
+
+3. **Proper URL Generation**: Use BuddyPress functions for URL creation
+   ```php
+   // Generate URLs with BuddyPress functions
+   $profile_url = bp_core_get_user_domain($user_id) . 'character/';
+   ```
+
+4. **Activity Integration**: Record character events in the activity stream
+   ```php
+   // Record character creation in activity
+   bp_activity_add(array(
+       'user_id' => $user_id,
+       'action' => sprintf(__('%s created a new character: %s', 'rpg-suite'), 
+           bp_core_get_userlink($user_id), 
+           $character_name
+       ),
+       'component' => 'rpg-suite',
+       'type' => 'new_character',
+   ));
+   ```
+
+## Testing Strategy
+
+1. **Unit Testing**: Test individual classes and methods
+2. **Integration Testing**: Test interactions between subsystems
+3. **WordPress Integration**: Test plugin with WordPress hooks and APIs
+4. **BuddyPress Testing**: Test BuddyPress integration with various themes
+5. **User Journey Testing**: Test complete user flows
+
+## Implementation Roadmap
+
+| Phase | Duration | Key Deliverables |
+|-------|----------|------------------|
+| Phase 1 | 1-2 weeks | Autoloader, Main plugin class, Event system |
+| Phase 2 | 2-3 weeks | Character post type, Character manager, Basic BP integration |
+| Phase 3 | 2-3 weeks | XP system, Feature unlocking, Character advancement |
+| Phase 4 | 3-4 weeks | Health, Inventory, Geo, and Dice subsystems |
+| Phase 5 | 2-3 weeks | Enhanced BP integration, Admin interface, Documentation |
+
+## Success Criteria
+
+The implementation is successful when:
+
+1. Plugin can be activated/deactivated without errors
+2. Character data displays correctly in BuddyPress profiles
+3. Users can create and manage characters
+4. Experience system tracks user progression
+5. Additional subsystems function correctly
+6. Admin interface allows for plugin management

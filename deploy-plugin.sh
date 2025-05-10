@@ -5,11 +5,14 @@ set -e
 # Usage: ./deploy-plugin.sh [site_name]
 # Example: ./deploy-plugin.sh geolarp
 
+# Get the directory of this script for relative paths
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Default site is geolarp if not specified
 SITE_NAME=${1:-"geolarp"}
 PLUGIN_NAME="rpg-suite"
-PLUGIN_DIR="/home/turtle_wolfe/repos/two_Tubes/RPG-Suite"
-ZZZ_DIR="/home/turtle_wolfe/repos/two_Tubes/ZZZ"
+PLUGIN_DIR="${SCRIPT_DIR}/RPG-Suite"
+ZZZ_DIR="${SCRIPT_DIR}/ZZZ"
 
 echo "Deploying $PLUGIN_NAME to $SITE_NAME..."
 
@@ -28,10 +31,6 @@ echo "Creating temporary directory: $TEMP_DIR"
 echo "Copying plugin files..."
 cp -r "$PLUGIN_DIR"/* "$TEMP_DIR/"
 
-# Remove components directory to force recreation
-echo "Removing dynamic component files to force recreation..."
-rm -rf "$TEMP_DIR/src/Core/Components"
-
 # Copy the plugin to the WordPress container
 echo "Copying plugin to container wp_${SITE_NAME}..."
 docker cp "$TEMP_DIR" "wp_${SITE_NAME}:/var/www/html/wp-content/plugins/$PLUGIN_NAME"
@@ -40,9 +39,10 @@ docker cp "$TEMP_DIR" "wp_${SITE_NAME}:/var/www/html/wp-content/plugins/$PLUGIN_
 echo "Setting correct permissions..."
 docker exec "wp_${SITE_NAME}" chown -R www-data:www-data "/var/www/html/wp-content/plugins/$PLUGIN_NAME"
 
-# Activate the plugin
-echo "Activating plugin..."
-docker exec "wp_${SITE_NAME}" wp plugin activate "$PLUGIN_NAME" --allow-root
+# Activate the plugin (only if not already active)
+echo "Ensuring plugin is activated..."
+docker exec "wp_${SITE_NAME}" wp plugin is-active "${PLUGIN_NAME}" --allow-root || \
+docker exec "wp_${SITE_NAME}" wp plugin activate "${PLUGIN_NAME}" --allow-root
 
 # Clean up the temporary directory
 echo "Cleaning up temporary directory..."

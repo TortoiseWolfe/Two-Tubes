@@ -1,147 +1,118 @@
-# Documentation Maintenance: First Principles
+# Documentation Maintenance Guidelines
 
-This guide outlines a first principles approach to maintaining documentation across the RPG-Suite plugin and ZZZ environment repositories.
+## Purpose
 
-## Documentation Core Principles
+The documentation in this repository serves to:
 
-1. **Single Source of Truth**: Each concept should be documented in exactly one place
-2. **Progressive Detail**: Start with high-level concepts, then drill down to specifics
-3. **Clear Separation**: Maintain clear boundaries between different types of documentation
-4. **Living Documentation**: Documentation should evolve alongside the codebase
-5. **Practical Examples**: Include concrete examples for complex concepts
+1. Track testing results and code quality assessment
+2. Document issues found during testing
+3. Provide clear, actionable feedback for developers
+4. Maintain a historical record of implementation challenges
+
+## Testing Documentation Workflow
+
+1. **Test execution**: Run tests on the codebase
+2. **Issue documentation**: Document any issues found in appropriate .md files
+3. **Solution validation**: Test and document effectiveness of implemented solutions
+4. **Status updates**: Maintain current status of different components
 
 ## Documentation Structure
 
-The documentation is organized into three main sections:
+### AI Docs Directory
 
-### 1. specs/
+This directory contains all testing results, implementation notes, and issue tracking.
 
-Contains formal specifications and requirements:
+- **RPG-Suite/**: Test results and issue tracking for the WordPress plugin
+  - **subsystem_status.md**: Overview of testing status for each subsystem
+  - **docker_testing.md**: Guide for testing in Docker environment
+  - **character_edit_fix_v022.md**: Testing guide for character editing
+  - **duplicate_buttons_fix_v022.md**: Testing guide for BuddyPress UI elements
+  - **implementation_plan.md**: Testing approach and validation plan
 
-- Project overview and integration strategies
-- Subsystem specifications
-- BuddyPress integration requirements
-- Test plans and acceptance criteria
+- **documentation_maintenance.md**: Guidelines for maintaining documentation
+- **overview.md**: Overall project and testing overview
 
-**When to update**: When requirements or specifications change at a fundamental level
+### Feedback Reports
 
-### 2. ai_docs/
+**IMPORTANT**: All test feedback reports should be written to:
+`./RPG-Suite/ai_docs/feedback.md`
 
-Contains implementation details, lessons learned, and practical knowledge:
+This is the primary document used by developers to track issues discovered during testing. Follow the issue documentation format specified below when adding entries to the feedback.md file.
 
-- Implementation steps and approaches
-- Troubleshooting guides
-- Integration notes
-- Lessons learned from implementation attempts
-- Code patterns and examples
+### Specs Directory
 
-**When to update**: As implementation progresses and new knowledge is gained
+This directory contains specifications and requirements that test results should be verified against.
 
-### 3. In-Code Documentation
+- **RPG-Suite/**: Plugin specifications
+  - **test_plan.md**: Comprehensive test plan with methodology and objectives
 
-Documentation within code files:
+## Documentation Standards
 
-- Class and method documentation
-- Function parameter descriptions
-- Implementation notes
-- Usage examples
+1. **Clear issue description**: Describe issues with specific examples
+2. **Reproducible steps**: Document exact steps to reproduce issues
+3. **Solution validation**: Document how solutions were tested
+4. **Status indicators**: Clearly mark issues as [PASS], [FAIL], or [PARTIAL]
 
-**When to update**: Whenever code changes affect behavior or API
+## Test Documentation Best Practices
 
-## Documentation Types by Purpose
+1. **Precision**: Be precise about what was tested and observed
+2. **Objectivity**: Document what actually happened, not expectations
+3. **Completeness**: Include all relevant information about test environment
+4. **Consistency**: Use consistent formatting for all test reports
+5. **Actionability**: Make documentation useful for addressing issues
 
-### Conceptual Documentation
+## Test Report Structure
 
-Explains concepts, architecture, and design principles:
+Every test report should include:
 
-- `specs/overview.md`: High-level project overview
-- `specs/RPG-Suite/subsystems.md`: Subsystem architecture
-- `ai_docs/RPG-Suite/implementation_plan.md`: Implementation approach
+1. **Test environment**: WordPress version, BuddyPress version, theme, browser
+2. **User personas**: User roles and permissions tested
+3. **Test scenarios**: Specific use cases and workflows tested
+4. **Observed behavior**: Exact system behavior during testing
+5. **Issues found**: Clear description of any issues with reproduction steps
+6. **Recommendations**: Suggested next steps or follow-up testing
 
-### Procedural Documentation
+## Issue Documentation Format
 
-Describes how to perform tasks:
+```
+## [Feature/Component Name] Issue
 
-- `DEV_WORKFLOW.md`: Development workflow steps
-- `deploy-plugin.sh`: Deployment process
-- `ai_docs/RPG-Suite/docker_testing.md`: Testing with Docker
+### Description
+Clear description of the observed issue
 
-### Reference Documentation
+### Environment
+- WordPress version:
+- BuddyPress version:
+- Theme:
+- Browser:
+- User role:
 
-Provides details for implementation:
+### Steps to Reproduce
+1. First step
+2. Second step
+3. Third step
 
-- `ai_docs/RPG-Suite/meta_keys.md`: Metadata field reference
-- `ai_docs/RPG-Suite/shortcodes.md`: Available shortcodes
-- Code comments for API reference
+### Expected Behavior
+What should happen
 
-### Problem-Solution Documentation
+### Actual Behavior
+What actually happens
 
-Captures solutions to problems:
+### Screenshots/Logs
+Any visual evidence or log outputs
 
-- `ai_docs/RPG-Suite/character_creation_troubleshooting.md`: Troubleshooting guide
-- `ai_docs/RPG-Suite/edit_character_fix.md`: Solution for character editing bug
-- `ai_docs/RPG-Suite/buddypress_integration.md`: BuddyPress integration lessons
+### Priority
+[Critical/Major/Minor]
 
-## Documentation Update Practices
+### Notes
+Additional observations or context
+```
 
-### When Adding New Features
+## Maintenance Responsibilities
 
-1. Update the relevant specification document first
-2. Create or update implementation notes in ai_docs
-3. Add code documentation as you implement
-4. Update test plan to cover the new feature
+The primary responsibility is thorough testing and accurate reporting. Focus on:
 
-### When Fixing Bugs
-
-1. Document the root cause analysis in ai_docs
-2. Update any affected specifications
-3. Add or update code comments explaining the fix
-4. Ensure test plan covers the fixed scenario
-
-### When Changing Architecture
-
-1. Update the relevant specification document
-2. Create a new document in ai_docs explaining the change
-3. Update any affected subsystem documentation
-4. Revise test plans to align with the new architecture
-
-## Cross-Repository Documentation
-
-When features impact both RPG-Suite and ZZZ repositories:
-
-1. Update `specs/overview.md` with integration changes
-2. Ensure deployment scripts reflect changes
-3. Document container requirements in ZZZ documentation
-4. Update testing procedures for both repositories
-
-## Documentation Review Process
-
-To maintain high-quality documentation:
-
-1. Review documentation changes alongside code reviews
-2. Verify technical accuracy of all documentation
-3. Ensure consistency across related documents
-4. Remove outdated information
-5. Check that examples are current and working
-
-## Documentation Format Standards
-
-For consistent documentation:
-
-- Use Markdown formatting with proper heading hierarchy
-- Include code examples in appropriate syntax highlighting
-- Use tables for structured data
-- Use lists for sequential steps or related items
-- Include diagrams for complex relationships (using ASCII art or external tools)
-
-## First Principles Approach to Updates
-
-When updating documentation, always consider:
-
-1. **Why**: What fundamental principle does this change address?
-2. **What**: What specific information needs to change?
-3. **Where**: Which document is the appropriate place for this information?
-4. **How**: What format best communicates this information?
-5. **When**: Is this a permanent change or a temporary state?
-
-By maintaining documentation according to these principles, both repositories will have clear, accurate, and useful documentation that evolves alongside the codebase and supports efficient development.
+1. Executing comprehensive test cases
+2. Documenting issues clearly
+3. Verifying fixes work correctly
+4. Maintaining current status of components

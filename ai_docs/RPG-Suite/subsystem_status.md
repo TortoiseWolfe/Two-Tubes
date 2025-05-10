@@ -1,135 +1,99 @@
-# RPG-Suite Subsystem Status
+# RPG-Suite Subsystem Testing Status
 
-This document details the current implementation status of each RPG-Suite subsystem and its components.
+This document tracks the testing status of various subsystems in the RPG-Suite plugin. It serves as a quick reference for the current state of each component.
 
 ## Core Subsystem
 
-**Status: 🔄 In Development - Core Event System & BuddyPress Integration Implemented**
+### Autoloader
+- **Status**: ❌ FAILING
+- **Issues**: Class loading errors, missing class "RPG_Suite_Core_Event_Dispatcher"
+- **Last Tested**: May 10, 2025
+- **Test Priority**: HIGH
 
-The Core subsystem provides the foundation for the entire RPG-Suite plugin.
+### Event System
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: MEDIUM
 
-### Components
-- **Event Dispatcher**: Symfony-style event dispatcher for inter-subsystem communication ✅
-- **Event Subscribers**: Subscription mechanism for listening to events ✅
-- **Autoloader**: PSR-4 compliant class autoloader ✅
-- **Character Manager**: Handles character creation and management ✅
-- **BuddyPress Integration**: Display characters in user profiles ✅
+### Plugin Infrastructure
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: HIGH
 
-### Technical Details
-- Located in: `/src/Core/`
-- Main Classes:
-  - `class-core.php`: Main Core class with initialization methods
-  - `class-event-dispatcher.php`: Event dispatch system
-  - `class-event-subscriber.php`: Base class for all event subscribers
-  - `class-event.php`: Base event class
-  - `Components/class-profile-integration.php`: BuddyPress profile integration
+## Character Management Subsystem
 
-### Integration Status
-- BuddyPress Profile Integration: ✅ Implemented with profile display and character switching
-- WordPress Admin Integration: ✅ Basic structure implemented with dashboard
+### Character Post Type
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: HIGH
 
-## Health Subsystem
+### Character Creation
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: MEDIUM
 
-**Status: 🔄 In Development - Basic Structure Only**
+### Character Editing
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: HIGH
 
-The Health subsystem will manage character health points and status effects.
+## BuddyPress Integration
 
-### Components
-- **Health Points Manager**: Handles current/max HP for characters 🔄
-- **Basic Health UI**: Visual health display in character profiles ❌
+### Profile Display
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: HIGH
 
-### Technical Details
-- Located in: `/src/Health/`
-- Main Classes:
-  - `class-health.php`: Primary class with placeholder structure
+### Navigation Elements
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: MEDIUM
 
-### Integration Status
-- BuddyPress Profile Display: ❌ Not implemented
-- WordPress Admin Interface: ❌ Not implemented
+### Character Switching
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: LOW
 
-## Future Subsystems
+## Experience System
 
-The following subsystems are planned for future development after the MVP is complete:
+### XP Tracking
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: LOW
 
-### Geo Subsystem
-- Will track character positions and manage map zones
-- Directory structure: `/src/Geo/`
+### Feature Unlocking
+- **Status**: ⚠️ NEEDS TESTING
+- **Issues**: Not tested yet
+- **Last Tested**: Not tested
+- **Test Priority**: LOW
 
-### Dice Subsystem
-- Will provide random number generation and dice rolling mechanics
-- Directory structure: `/src/Dice/`
+## Status Legend
 
-### Inventory Subsystem
-- Will manage character items and equipment
-- Directory structure: `/src/Inventory/`
+- ✅ VERIFIED: Functionality tested and working correctly
+- ⚠️ NEEDS TESTING: Not fully tested or needs more thorough testing
+- 🔍 IN PROGRESS: Currently being tested
+- ❌ FAILING: Tests failing, issues identified
+- 🔧 FIXED: Previously failing, now fixed and verified
 
-### Combat Subsystem
-- Will manage turn-based encounters and combat mechanics
-- Directory structure: `/src/Combat/`
+## Testing Priority
 
-## Current MVP Implementation Status
+- HIGH: Critical functionality that should be tested first
+- MEDIUM: Important but not blocking functionality
+- LOW: Nice-to-have features that can be tested later
 
-### Core WordPress Integration
-- Plugin Activation/Deactivation: ✅ Implemented
-- Admin Menu Integration: ✅ Implemented
-- Custom Post Type (rpg_character): ✅ Implemented
-- Custom Capabilities: 🔄 In progress
-- Character Editing (Admin): ❌ Critical bug - "Item doesn't exist" error
+## Next Testing Focus
 
-### BuddyPress Integration
-- Profile Display: ✅ Implemented
-- Character Switching UI: ✅ Implemented
-- BuddyX Theme Compatibility: ✅ Implemented
-- Profile Card Integration: ✅ Implemented (character displays inside card)
-
-### Experience System
-- GamiPress Integration: 🔍 Planning phase
-- XP Point Types: 📝 Planned
-- Feature Unlocking: 📝 Planned
-- Proper Profile Card Integration: ✅ Implemented (Fixed positioning within card)
-
-## Implementation Progress
-
-1. **Character Manager - Completed ✅**
-   - Character creation/editing implemented
-   - Support for multiple characters per player added
-   - Character ownership relationship established
-
-2. **BuddyPress Integration - Completed ✅**
-   - Profile display hooks added
-   - Character display template created
-   - Character switching UI implemented
-   - CSS styling for BuddyX theme
-
-3. **Core Plugin Structure - Completed ✅**
-   - Global variable access implemented
-   - PSR-4 autoloading configured
-   - Event system established
-
-## Next Implementation Steps
-
-1. **Fix Critical Bugs**
-   - Debug and fix "Item doesn't exist" error when editing characters
-   - Investigate character post type registration and capabilities
-   - Ensure proper access control for character management
-
-2. **Experience Point System with GamiPress**
-   - Integrate with existing GamiPress installation
-   - Create custom point types for character experience
-   - Implement feature unlocking based on achievements
-   - Design progression visualization UI
-
-3. **Add Basic Health System**
-   - Character HP tracking
-   - Visual health representation
-   - Damage/healing functionality
-
-4. **Additional Subsystems**
-   - Begin implementation of Geo subsystem
-   - Begin implementation of Dice subsystem
-   - Begin implementation of Inventory subsystem
-
-5. **Enhanced Integration**
-   - Character actions in activity stream
-   - Advanced character management features
-   - GM tools and interfaces
+1. Autoloader functionality
+2. Character management functionality
+3. BuddyPress profile integration
+4. Admin interface functionality
+5. Permission and capability handling

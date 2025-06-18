@@ -1,5 +1,9 @@
 # Claude Code Notes
 
+## Primary Tasks
+1. Deploy RPG-Suite plugin to ZZZ test environment using existing deployment scripts
+2. Test BuddyPress integration in the ZZZ environment
+
 ## RPG-Suite and ZZZ Integration Status
 
 ### Current Implementation Status
